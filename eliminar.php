@@ -6,7 +6,7 @@ ob_start();
 include("conexion.php");
 
 // Obtener el ID de la persona desde la URL
-$id = $_POST['id'];
+$id = $_GET['id'];
 
 // Conectar a la base de datos
 $con = conexion();
