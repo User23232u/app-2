@@ -3,14 +3,19 @@
 include("conexion.php");
 
 // Obtener el ID de la persona desde la URL
-$id = $_GET['id'];
+$id = $_POST['id'];
 
 // Conectar a la base de datos
 $con = conexion();
 
 // Preparar la sentencia SQL para eliminar el registro
-$sql = "DELETE FROM persona WHERE idpersona = $id";
-$result = pg_query($con, $sql);
+$sql = "DELETE FROM persona WHERE idpersona = $1";
+
+// Prepare the statement
+$stmt = pg_prepare($con, "delete_query", $sql);
+
+// Execute the statement with the id parameter
+$result = pg_execute($con, "delete_query", array($id));
 
 // Verificar si el registro fue eliminado
 if ($result) {
