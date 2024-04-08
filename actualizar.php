@@ -1,43 +1,34 @@
 <?php
+// Establecer la conexión con la base de datos
 include("conexion.php");
 $con = conexion();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id = $_POST["id"];
-    $nombre = $_POST["nombre"];
-    $apellido = $_POST["apellido"];
-    $direccion = $_POST["direccion"];
-    $celular = $_POST["celular"];
+// Preparar la sentencia SQL
+$stmtName = 'update_persona';
+$sql = 'UPDATE persona SET documento = $1, nombre = $2, apellido = $3, direccion = $4, celular = $5 WHERE idpersona = $6';
 
-    $sql = "UPDATE persona SET nombre='$nombre', apellido='$apellido', direccion='$direccion', celular='$celular' WHERE id=$id";
-    pg_query($con, $sql);
+// Preparar la sentencia
+$result = pg_prepare($con, $stmtName, $sql);
+
+// Verificar si la preparación fue exitosa
+if ($result) {
+    // Ejecutar la sentencia preparada
+    $result = pg_execute($con, $stmtName, array($_POST['documento'], $_POST['nombre'], $_POST['apellido'], $_POST['direccion'], $_POST['celular'], $_POST['id']));
+
+    // Verificar si la ejecución fue exitosa
+    if ($result) {
+        echo "La persona ha sido actualizada.";
+    } else {
+        echo "Error al actualizar la persona.";
+    }
+} else {
+    echo "Error al preparar la actualización.";
 }
 
+// Cerrar la conexión
 pg_close($con);
-?>
 
-<div class="container">
-    <form method="post" action="actualizar.php">
-        <div class="form-group">
-            <label for="id">ID</label>
-            <input type="text" class="form-control" id="id" name="id">
-        </div>
-        <div class="form-group">
-            <label for="nombre">Nombre</label>
-            <input type="text" class="form-control" id="nombre" name="nombre">
-        </div>
-        <div class="form-group">
-            <label for="apellido">Apellido</label>
-            <input type="text" class="form-control" id="apellido" name="apellido">
-        </div>
-        <div class="form-group">
-            <label for="direccion">Dirección</label>
-            <input type="text" class="form-control" id="direccion" name="direccion">
-        </div>
-        <div class="form-group">
-            <label for="celular">Celular</label>
-            <input type="text" class="form-control" id="celular" name="celular">
-        </div>
-        <button type="submit" class="btn btn-primary">Actualizar</button>
-    </form>
-</div>
+// Redirigir al usuario a la página de verificación o a la lista de personas
+header("Location: index.php");
+exit;
+?>

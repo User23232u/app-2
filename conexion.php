@@ -1,5 +1,6 @@
 <?php
-	function conexion(){
+function conexion()
+{
 
 	$host = "host=roundhouse.proxy.rlwy.net";
 	$port = "port=30689";
@@ -11,4 +12,3 @@
 
 	return $db;
 }
-?>
