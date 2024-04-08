@@ -2,37 +2,36 @@
 // Start output buffering
 ob_start();
 
-// Incluir el archivo de conexión a la base de datos
+// Establecer la conexión con la base de datos
 include("conexion.php");
-
-// Obtener el ID de la persona y los nuevos datos desde el formulario
-$id = $_POST['id'];
-$newName = $_POST['newName'];
-$newAddress = $_POST['newAddress'];
-
-// Conectar a la base de datos
 $con = conexion();
 
-// Preparar la sentencia SQL para actualizar el registro
-$sql = "UPDATE persona SET nombre = $1, direccion = $2 WHERE idpersona = $3";
+// Preparar la sentencia SQL
+$stmtName = 'update_persona';
+$sql = 'UPDATE persona SET documento = $1, nombre = $2, apellido = $3, direccion = $4, celular = $5 WHERE idpersona = $6';
 
-// Prepare the statement
-$stmt = pg_prepare($con, "update_query", $sql);
+// Preparar la sentencia
+$result = pg_prepare($con, $stmtName, $sql);
 
-// Execute the statement with the new data and id parameters
-$result = pg_execute($con, "update_query", array($newName, $newAddress, $id));
-
-// Verificar si el registro fue actualizado
+// Verificar si la preparación fue exitosa
 if ($result) {
-    echo "La persona con el ID: $id ha sido actualizada.";
+    // Ejecutar la sentencia preparada
+    $result = pg_execute($con, $stmtName, array($_POST['documento'], $_POST['nombre'], $_POST['apellido'], $_POST['direccion'], $_POST['celular'], $_POST['id']));
+
+    // Verificar si la ejecución fue exitosa
+    if ($result) {
+        echo "La persona ha sido actualizada.";
+    } else {
+        echo "Error al actualizar la persona.";
+    }
 } else {
-    echo "Error al actualizar la persona con el ID: $id.";
+    echo "Error al preparar la actualización.";
 }
 
 // Cerrar la conexión
 pg_close($con);
 
-// Redirigir al usuario a la página principal o a la lista de personas
+// Redirigir al usuario a la página de verificación o a la lista de personas
 header("Location: index.php");
 
 // End output buffering and flush the output
