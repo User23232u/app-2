@@ -1,4 +1,7 @@
 <?php
+// Start output buffering
+ob_start();
+
 // Incluir el archivo de conexión a la base de datos
 include("conexion.php");
 
@@ -26,5 +29,9 @@ pg_close($con);
 
 // Redirigir al usuario a la página principal o a la lista de personas
 header("Location: index.php");
+
+// Flush the output buffer
+ob_end_flush();
+
 exit;
 ?>
